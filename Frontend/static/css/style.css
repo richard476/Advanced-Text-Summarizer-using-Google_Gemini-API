@@ -35,6 +35,71 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
+/* --- Chatbox Styles --- */
+#summary-output {
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Common chat bubble style */
+.chat-message {
+    max-width: 75%;
+    padding: 0.75rem 1rem;
+    border-radius: 16px;
+    word-wrap: break-word;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message text */
+.msg-text {
+    margin-bottom: 0.3rem;
+}
+
+/* Timestamp style */
+.msg-time {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    align-self: flex-end;
+}
+
+/* Bot messages (left side, purple/blue gradient) */
+.bot-msg {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #805ad5, #4c51bf);
+    color: #fff;
+    border-bottom-left-radius: 4px;
+}
+
+/* User messages (right side, pink gradient) */
+.user-msg {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #d53f8c, #b83280);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+/* Scrollbar styling */
+#summary-output::-webkit-scrollbar {
+    width: 6px;
+}
+#summary-output::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+}
+
+/* --- Inputs & Buttons --- */
 textarea, #summary-container {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -94,6 +159,7 @@ textarea::placeholder {
     border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Loader spinner */
 .loader {
     border: 4px solid #374151;
     border-top: 4px solid #d53f8c;
@@ -101,10 +167,12 @@ textarea::placeholder {
     width: 40px;
     height: 40px;
     animation: spin 1s linear infinite;
+    margin: 1rem auto;
 }
 
 .gradient-text {
     background: -webkit-linear-gradient(45deg, #eee, #999);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -112,4 +180,321 @@ textarea::placeholder {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* 🌗 Light Theme Styles */
+body.light-theme {
+  background-color: #f9fafb; /* light gray/white */
+  color: #1f2937; /* dark text */
+}
+
+body.light-theme .glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1f2937;
+}
+
+body.light-theme #summary-output {
+  background: rgba(255, 255, 255, 0.6);
+  color: #111;
+}
+
+body.light-theme .bot-msg {
+  background: linear-gradient(135deg, #6366f1, #3b82f6); /* Indigo-Blue */
+  color: #fff;
+}
+
+body.light-theme .user-msg {
+  background: linear-gradient(135deg, #ec4899, #db2777); /* Pink */
+  color: #fff;
+}
+
+/* 🌈 Cyberpunk Theme */
+body.cyberpunk-theme {
+  background-color: #0f0f0f;
+  color: #f5f5f5;
+}
+body.cyberpunk-theme .glass-panel {
+  background: rgba(255, 0, 128, 0.15);
+  border: 1px solid #ff00ff;
+}
+body.cyberpunk-theme .bot-msg {
+  background: linear-gradient(135deg, #00f0ff, #ff00ff);
+}
+body.cyberpunk-theme .user-msg {
+  background: linear-gradient(135deg, #ff0080, #ffae00);
+}
+
+/* 🌸 Pastel Theme */
+body.pastel-theme {
+  background-color: #fffafc;
+  color: #444;
+}
+body.pastel-theme .glass-panel {
+  background: rgba(255, 182, 193, 0.2);
+  border: 1px solid #fbb6ce;
+}
+body.pastel-theme .bot-msg {
+  background: linear-gradient(135deg, #a7f3d0, #f9a8d4);
+  color: #333;
+}
+body.pastel-theme .user-msg {
+  background: linear-gradient(135deg, #bfdbfe, #fcd34d);
+  color: #333;
+}
+
+/* 💻 Hacker Green Theme */
+body.hacker-theme {
+  background-color: #000;
+  color: #00ff00;
+}
+body.hacker-theme .glass-panel {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid #00ff00;
+}
+body.hacker-theme .bot-msg,
+body.hacker-theme .user-msg {
+  background: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+}
+
+/* ⚡ Neon Theme */
+body.neon-theme {
+  background-color: #080808;
+  color: #fff;
+}
+body.neon-theme .glass-panel {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid #0ff;
+  box-shadow: 0 0 15px #0ff;
+}
+body.neon-theme .bot-msg {
+  background: linear-gradient(135deg, #0ff, #f0f);
+}
+body.neon-theme .user-msg {
+  background: linear-gradient(135deg, #ff0, #0ff);
+}
+
+/* --- Extra Canvas for Matrix/Bubbles FX --- */
+#fx-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2; /* keep behind bg-canvas */
+  pointer-events: none; /* don’t block clicks */
+}
+
+/* --- Drag & Drop Zone Styles --- */
+.drop-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #805ad5;
+}
+
+.drop-zone .dz-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.drop-zone .dz-sub {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.drop-zone .dz-browse {
+  color: #805ad5;
+  font-weight: bold;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.drop-zone .dz-hint {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* 🎤 Mic Listening State */
+#mic-btn.listening {
+  background: #dc2626; /* red */
+  color: #fff;
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.7);
+}
+
+/* 🎤 Mic Button Pulse Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+/* Apply pulse only when listening */
+#mic-btn.listening {
+  background-color: #ff4444 !important;
+  color: white !important;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+/* Toggle switch base */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+/* When checked */
+input:checked + .slider {
+  background-color: #4cafef;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Round slider */
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.toggle-label {
+  font-size: 0.9rem;
+  color: #ddd;
+  vertical-align: middle;
+}
+
+/* 🎉 Confetti Canvas */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* 📂 History Sidebar */
+.history-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100%;
+  background: rgba(15, 15, 20, 0.95);
+  border-right: 1px solid #444;
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  z-index: 1000;
+}
+.history-sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+/* 🔦 Keyword Highlight */
+.highlight {
+  background: yellow;
+  font-weight: bold;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* 🎙️ Voice Select Dropdown */
+.voice-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.voice-label {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+#voice-select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: rgba(20, 20, 30, 0.9);
+  border: 1px solid #444;
+  color: #f1f1f1;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border 0.2s ease, background 0.2s ease;
+}
+#voice-select:hover {
+  border-color: #888;
+  background: rgba(30, 30, 40, 0.95);
+}
+#voice-select:focus {
+  border-color: #00c4ff;
+  background: rgba(40, 40, 50, 1);
+}
+
+/* 🌌 Word Cloud Canvas */
+#word-cloud {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 5;
 }

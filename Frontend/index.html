@@ -16,10 +16,33 @@
     
     <!-- Your Custom CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- ✅ PDF.js for PDF text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+    </script>
 </head>
 <body class="bg-black">
 
     <canvas id="bg-canvas"></canvas>
+    <!-- ✅ Extra canvas for Matrix/Bubbles effects -->
+    <canvas id="fx-canvas"></canvas>
+    <!-- ✅ Confetti canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- 📂 Sidebar for History -->
+    <aside class="history-sidebar hidden">
+        <div class="p-3 border-b border-slate-700 flex items-center justify-between">
+            <h2 class="text-lg font-bold text-white">History</h2>
+            <button id="clear-history-btn" class="text-red-400 hover:text-red-600">Clear</button>
+        </div>
+        <div class="p-2">
+            <input id="history-search" placeholder="Search history..." class="w-full p-2 rounded bg-slate-800 text-white"/>
+        </div>
+        <div id="history-panel" class="p-3 text-white text-sm"></div>
+    </aside>
 
     <main class="w-full">
         <section id="hero" class="content-section text-center">
@@ -33,10 +56,81 @@
         <section id="summarizer-app" class="content-section">
             <div class="w-full max-w-4xl mx-auto glass-panel p-8 md:p-12">
                 <h2 class="text-3xl font-bold text-center mb-6 text-white">Enter Your Text or Question</h2>
-                <div class="space-y-6">
-                    <div>
-                        <textarea id="text-input" rows="10" class="w-full p-4 text-slate-200 focus:outline-none"></textarea>
+                <div class="space-y-6">   
+
+                    <!-- ✅ Drag & Drop Upload Zone -->
+                    <div id="drop-zone" class="drop-zone">
+                        <!-- 🔥 Hidden input for Browse -->
+                        <input id="file-input" type="file" accept=".txt,application/pdf" style="display: none;" />
+                        <p class="dz-title">📥 Drag & drop a .pdf or .txt file here</p>
+                        <p class="dz-sub">or <button type="button" id="browse-btn" class="dz-browse">browse</button></p>
+                        <p class="dz-hint">We’ll auto-extract the text and summarize it.</p>
                     </div>
+
+                    <div>
+                        <!-- 📝 Added data-autosave attribute -->
+                        <textarea id="text-input" rows="10" class="w-full p-4 text-slate-200 focus:outline-none" data-autosave="true"></textarea>
+                    </div>
+
+                    <!-- 🎤 Mic Button for Speech-to-Text -->
+                    <div class="flex justify-end">
+                        <button id="mic-btn" class="btn btn-secondary">🎤 Speak</button>
+                    </div>
+
+                    <!-- 🌍 Language Selector -->
+                    <div class="mt-4">
+                        <label for="language" class="block text-sm font-medium text-slate-400 mb-2">🌍 Summarize in:</label>
+                        <select id="language" class="w-full p-2 rounded bg-black/40 border border-slate-600 text-slate-200">
+                            <option value="auto">Auto Detect</option>
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="ta">Tamil</option>
+                            <option value="fr">French</option>
+                            <option value="es">Spanish</option>
+                            <option value="de">German</option>
+                            <option value="zh">Chinese</option>
+                        </select>
+                    </div>
+
+                    <!-- 🎨 Theme Selector -->
+                    <div class="mt-4">
+                        <label for="theme" class="block text-sm font-medium text-slate-400 mb-2">🎨 Choose Theme:</label>
+                        <select id="theme" class="w-full p-2 rounded bg-black/40 border border-slate-600 text-slate-200">
+                            <option value="dark">🌑 Dark</option>
+                            <option value="light">☀️ Light</option>
+                            <option value="cyberpunk">🌈 Cyberpunk Neon</option>
+                            <option value="pastel">🎀 Pastel</option>
+                            <option value="hacker">💻 Hacker Green</option>
+                        </select>
+                    </div>
+
+                    <!-- 🌌 Background Animation Selector -->
+                    <div class="mt-4">
+                        <label for="bg-theme" class="block text-sm font-medium text-slate-400 mb-2">🌌 Background Animation:</label>
+                        <select id="bg-theme" class="w-full p-2 rounded bg-black/40 border border-slate-600 text-slate-200">
+                            <option value="none">🚫 None</option>
+                            <option value="matrix">💻 Matrix Rain</option>
+                            <option value="aurora">🌈 Aurora</option>
+                            <option value="stars">✨ Space Stars</option>
+                        </select>
+                    </div>
+
+                    <!-- 🤖 Conversation Memory Toggle -->
+                    <div class="mt-4 flex items-center gap-3">
+                        <input type="checkbox" id="memory-toggle" class="w-4 h-4">
+                        <label for="memory-toggle" class="text-slate-400">🤖 Remember Conversation</label>
+                    </div>
+
+                    <!-- 📜 Summarization Mode Selector -->
+                    <div class="mt-4">
+                        <label for="summary-mode" class="block text-sm font-medium text-slate-400 mb-2">📜 Summary Length:</label>
+                        <select id="summary-mode" class="w-full p-2 rounded bg-black/40 border border-slate-600 text-slate-200">
+                            <option value="short">Short</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="detailed">Detailed</option>
+                        </select>
+                    </div>
+
                     <div id="button-group" class="flex flex-wrap items-center justify-center gap-4">
                         <button id="gemini-btn" class="btn btn-primary">
                            ✨ Summarize
@@ -54,6 +148,15 @@
                            ❓ Ask Gemini
                         </button>
                     </div>
+
+                    <!-- Rephrase buttons (Concise/Formal/Casual/Simplified) -->
+                    <div id="rephrase-group" class="rephrase-group flex flex-wrap items-center justify-center gap-2">
+                        <button class="btn btn-secondary rephrase" data-tone="concise">✂️ Concise</button>
+                        <button class="btn btn-secondary rephrase" data-tone="formal">🎩 Formal</button>
+                        <button class="btn btn-secondary rephrase" data-tone="casual">🙂 Casual</button>
+                        <button class="btn btn-secondary rephrase" data-tone="simplified">🔤 Simplified</button>
+                    </div>
+
                     <div>
                         <label for="summary-output" class="block text-sm font-medium text-slate-400 mb-2">Output:</label>
                         <div id="summary-container" class="w-full p-4 min-h-[200px] text-slate-200">
@@ -61,12 +164,55 @@
                             <div id="summary-output"></div>
                         </div>
                     </div>
+
+                    <!-- 📜 History Panel -->
+                    <div class="mt-6">
+                        <h3 class="text-xl font-semibold text-white mb-2">🕘 History</h3>
+
+                        <!-- History tools: toggle + search -->
+                        <div id="history-tools" class="history-tools flex gap-2 mb-2">
+                            <button id="toggle-history" class="btn btn-secondary">☰ History</button>
+                            <input id="history-search" class="history-search-input w-full p-2 rounded bg-black/30 border border-slate-600 text-slate-300" placeholder="Search history..." />
+                        </div>
+
+                        <div id="history-panel" class="bg-black/40 border border-slate-600 p-3 rounded max-h-48 overflow-y-auto text-slate-300 text-sm">
+                            <p class="text-slate-500">No history yet.</p>
+                        </div>
+                        <div class="flex justify-end mt-2">
+                            <button id="clear-history-btn" class="btn btn-secondary text-xs py-1 px-3">🗑️ Clear History</button>
+                        </div>
+                    </div>
+
                     <div class="flex flex-wrap items-center justify-center gap-4">
                         <button id="pdf-btn" class="btn btn-secondary" disabled>
-                           📄 Download PDF
+                            📄 Download PDF
                         </button>
-                         <button id="clear-btn" class="btn btn-secondary">
-                           🗑️ Clear Memory
+                        <button id="txt-btn" class="btn btn-secondary" disabled>
+                            📝 Download TXT
+                        </button>
+                        <button id="docx-btn" class="btn btn-secondary" disabled>
+                            📑 Download DOCX
+                        </button>
+                        <button id="copy-btn" class="btn btn-secondary" disabled>
+                            📋 Copy to Clipboard
+                        </button>
+                        <!-- Voice selector for TTS -->
+                        <div class="voice-select-wrap inline-flex items-center gap-2">
+                            <label for="voice-select" class="voice-label text-slate-300">Voice:</label>
+                            <select id="voice-select" class="p-2 rounded bg-black/30 border border-slate-600 text-slate-200"></select>
+                        </div>
+                        <button id="tts-btn" class="btn btn-secondary" disabled>
+                            🔊 Read Aloud
+                        </button>
+                        <button id="stop-tts-btn" class="btn btn-secondary" disabled>
+                            ⏹️ Stop
+                        </button>
+                        <button id="clear-btn" class="btn btn-secondary">
+                            🗑️ Clear Memory
+                        </button>
+                        <!-- 💾 Delete Draft Button -->
+                        <button id="delete-draft-btn" class="btn btn-secondary">
+                            ❌ Delete Draft
                         </button>
                     </div>
                 </div>
